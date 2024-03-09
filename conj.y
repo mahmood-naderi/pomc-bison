@@ -9,7 +9,7 @@
 %left   '+' '-'
 %left   '*'
 %right  '&' "++" "--" 
-%left '(' '['
+%left   '(' '['
 %%
 
 library:    functions;
@@ -19,25 +19,30 @@ paramdecls: paramdecl | %empty;
 paramdecl:  paramdecl ',' IDENTIFIER
 |           IDENTIFIER;
 stmt:       com_stmt  '}'
-|           "if" '{' expr  '}' stmt
-|           "while" '{' expr '}'  stmt
-|           "return" expr ';'
+|           "if" '(' exprs  ')' stmt
+|           "while" '(' exprs ')'  stmt
+|           "return" exprs ';'
 |           var_defs ';'
-|           expr ';'
-|           ';'
+|           exprs ';'
+|           ';';
 com_stmt:   '{'
 |           com_stmt stmt;
 var_defs:   "var" var_def1
 |           var_defs ',' var_def1;
 var_def1:   IDENTIFIER '=' expr
 |           IDENTIFIER;
+exprs:      var_defs
+|           expr
+|           expr ',' c_expr1;
+c_expr1:    expr
+|           c_expr1 ',' expr;
 expr:       NUMCONST
 |           STRINGCONST
 |           IDENTIFIER
-|           '<' expr '>'
-|           expr '[' expr ']'
-|           expr '<' '>'
-|           expr '<' expr '>'
+|           '(' exprs ')'
+|           expr '[' exprs ']'
+|           expr '(' ')'
+|           expr '(' c_expr1 ')'
 |           expr '=' expr
 |           expr '+' expr
 |           expr '-' expr   %prec '+'
