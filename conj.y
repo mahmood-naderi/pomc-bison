@@ -1,3 +1,21 @@
+%skeleton "lalr1.cc"
+%define parser_class_name {conj_parser}
+%define api.token.constructor
+%define api.value.type variant
+%define parse.assert
+%define parse.error verbose
+%locations
+
+%code requires {
+#include <map>
+#include <list>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <algorithm>
+}
+
+
 %token  END 0
 %token  RETRUN "return" WHILE "while" IF "if" VAR "var" IDENTIFIER NUMCONST STRINGCONST
 %token  OR "||" AND "&&" EQ "==" NE "!=" PP "++" MM "--" PL_EQ "+=" MI_EQ "-="
@@ -22,7 +40,6 @@ stmt:       com_stmt  '}'
 |           "if" '(' exprs  ')' stmt
 |           "while" '(' exprs ')'  stmt
 |           "return" exprs ';'
-|           var_defs ';'
 |           exprs ';'
 |           ';';
 com_stmt:   '{'
