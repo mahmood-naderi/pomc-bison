@@ -30,6 +30,41 @@ struct identifier {
     std::string name;
 };
 
+#define ENUM_EXPRESSIONS(o) \
+        o(nop) o(string) o(number) o(ident) \
+        o(add) o(neg) o(eq) \
+        o(cor) o(cand) o(loop) \
+        o(addrof) o(deref) \
+        o(fcall) \
+        o(copy) \
+        o(comma) \
+        o(ret)
+#define o(n) n,
+enum class ex_type {ENUM_EXPRESSIONS(O)};
+#undef o
+
+typedef std::list<struct expression> expr_vec;
+struct expression {
+    ex_type type;
+    indentifier ident{};
+    std::string strValue{};
+    long numValue = 0;
+    expr_vec params;
+
+    template<typename... T>
+    expression(ex_type t, T&&... args) : type(t), params{ std::forward<T>(args)... } {}
+
+    expression()                    : type(ex_type::nop) {}
+    expression(cont identifier& i)  : type(ex_type::ident), ident(i) {}
+    expression(identifier&& i)      : type(ex_type::ident), ident(std::move(i)) {}
+    expression(std::string&& s)     : type(ex_type::string), strValue(std::move(s)) {}
+    expression(long v)              : type(ex_type::number), numvalue(v) {}
+
+    bool is_pure() cosnt;
+
+    expression operator%=(expression&& b) && { return expression(ex_type::copy, std::move(b), std::move(this)); }
+};
+
 %token  END 0
 %token  RETRUN "return" WHILE "while" IF "if" VAR "var" IDENTIFIER NUMCONST STRINGCONST
 %token  OR "||" AND "&&" EQ "==" NE "!=" PP "++" MM "--" PL_EQ "+=" MI_EQ "-="
