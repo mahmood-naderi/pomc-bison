@@ -15,6 +15,20 @@
 #include <algorithm>
 }
 
+#define ENUM_IDENTIFIERS(o) \
+        o(undefined) \
+        o(function) \
+        o(parameter) \
+        o(variable)
+#define o(n) n,
+enum class id_types {ENUM_IDENTIFIERS(o)}
+#undef o
+
+struct identifier {
+    id_type type = id_type::undefined;
+    std::size_t index = 0;
+    std::string name;
+};
 
 %token  END 0
 %token  RETRUN "return" WHILE "while" IF "if" VAR "var" IDENTIFIER NUMCONST STRINGCONST
