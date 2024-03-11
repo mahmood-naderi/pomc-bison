@@ -13,7 +13,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
-}
+
 
 #define ENUM_IDENTIFIERS(o) \
         o(undefined) \
@@ -64,6 +64,20 @@ struct expression {
 
     expression operator%=(expression&& b) && { return expression(ex_type::copy, std::move(b), std::move(this)); }
 };
+
+#define o(n) \
+template <typename ...T> \
+inline expression e_##n(T&&... args) { return expression(ex_type::n, std::forward<T>(args)...); }
+ENUM_EXPRESSION(O)
+#undef o
+
+struct function {
+    std::string name;
+    expression code;
+    unsigned num_vars = 0, num_params = 0;
+};
+
+} // code requires
 
 %token  END 0
 %token  RETRUN "return" WHILE "while" IF "if" VAR "var" IDENTIFIER NUMCONST STRINGCONST
